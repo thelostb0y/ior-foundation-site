@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register &middot; It's Only Right Weekend</title>
+<style>
+  :root{
+    --ink:#0B0B0C;--ink-70:#3a3a3d;--ink-45:#6f6f74;
+    --paper:#FFFFFF;--mist:#F6F5F2;--line:#E7E5E1;
+    --red:#C8102E;--red-deep:#9E0C22;
+    --maxw:1080px;--gut:clamp(20px,5vw,64px);
+    --fdisp:"Helvetica Neue",Helvetica,"Arial Nova",Arial,system-ui,sans-serif;
+    --fbody:ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+    --fserif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);font-family:var(--fbody);line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding-inline:var(--gut)}
+  h1,h2,h3{font-family:var(--fdisp);font-weight:800;letter-spacing:-.03em;line-height:1;text-wrap:balance}
+  .ey{font-size:12px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--red)}
+  .btn{display:inline-flex;align-items:center;gap:.5em;font-weight:650;font-size:15px;letter-spacing:-.01em;padding:14px 26px;border-radius:100px;transition:transform .35s cubic-bezier(.2,.7,.2,1),background .3s,color .3s;border:none;cursor:pointer;font-family:inherit}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-red{background:var(--red);color:#fff}.btn-red:hover{background:var(--red-deep)}
+  .btn-ghost{border:1.5px solid var(--ink);color:var(--ink);background:transparent}.btn-ghost:hover{background:var(--ink);color:#fff}
+
+  header.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:saturate(1.4) blur(14px);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;justify-content:space-between;height:70px;max-width:1240px;margin:0 auto;padding-inline:var(--gut)}
+  .brand{display:flex;align-items:baseline;gap:.55em;font-family:var(--fdisp);font-weight:800;letter-spacing:-.02em;font-size:17px}
+  .brand .mark{color:var(--red)}
+  .brand small{font-weight:700;font-size:10px;letter-spacing:.22em;color:var(--ink-45);text-transform:uppercase}
+  .nav-links{display:flex;align-items:center;gap:30px}
+  .nav-links a.lk{font-size:14.5px;font-weight:550;color:var(--ink-70)}
+  .nav-links a.lk:hover{color:var(--ink)}
+  @media(max-width:760px){.nav-links a.lk{display:none}}
+
+  .reg{padding:clamp(48px,7vw,88px) 0 clamp(70px,9vw,120px)}
+  .reg-head{max-width:640px;margin-bottom:22px}
+  .reg-head h1{font-size:clamp(2.6rem,6vw,4.4rem);margin:16px 0 14px}
+  .reg-head p{color:var(--ink-70);font-size:17px;max-width:52ch}
+  .facts{display:flex;flex-wrap:wrap;gap:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:30px 0 44px}
+  .fact{flex:1 1 180px;padding:18px 22px;border-right:1px solid var(--line)}
+  .fact:last-child{border-right:none}
+  .fact b{display:block;font-family:var(--fdisp);font-weight:800;letter-spacing:-.02em;font-size:18px}
+  .fact span{font-size:12.5px;color:var(--ink-45);letter-spacing:.02em}
+  @media(max-width:640px){.fact{flex:1 1 45%;border-bottom:1px solid var(--line)}}
+
+  form{background:var(--mist);border:1px solid var(--line);border-radius:22px;padding:clamp(26px,4vw,48px)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px 24px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+  .field{display:flex;flex-direction:column;gap:8px}
+  .field.full{grid-column:1/-1}
+  label{font-size:13px;font-weight:650;letter-spacing:.01em;color:var(--ink)}
+  label .req{color:var(--red)}
+  .hint{font-weight:400;color:var(--ink-45);font-size:12px}
+  input,select,textarea{font-family:inherit;font-size:15.5px;color:var(--ink);background:var(--paper);
+    border:1px solid var(--line);border-radius:11px;padding:13px 15px;transition:border-color .2s,box-shadow .2s;width:100%}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(200,16,46,.12)}
+  select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236f6f74' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 15px center;padding-right:38px}
+  textarea{resize:vertical;min-height:84px}
+  .actions{grid-column:1/-1;display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:8px}
+  .actions .note{font-size:12.5px;color:var(--ink-45)}
+  .hp{position:absolute;left:-9999px}
+
+  footer{background:var(--ink);color:#8f8f95;padding:44px 0;font-size:13.5px;margin-top:10px}
+  .foot-in{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center}
+  footer .brand{color:#fff}footer .brand small{color:#77777d}
+  footer a:hover{color:#fff}
+  :focus-visible{outline:2px solid var(--red);outline-offset:3px;border-radius:6px}
+</style>
+</head>
+<body>
+<header class="nav"><div class="nav-in">
+  <a class="brand" href="index.html"><span class="mark">It's Only Right</span><small>Foundation</small></a>
+  <nav class="nav-links">
+    <a class="lk" href="index.html#programs">Programs</a>
+    <a class="lk" href="index.html#camp">The Weekend</a>
+    <a class="lk" href="index.html#story">Our Story</a>
+    <a class="lk" href="index.html">Home</a>
+  </nav>
+</div></header>
+
+<main class="reg">
+  <div class="wrap">
+    <div class="reg-head">
+      <span class="ey">It's Only Right Weekend &middot; Aug 7&ndash;8, 2026</span>
+      <h1>Register your camper.</h1>
+      <p>Free, for all young people ages 7 to 17. Fill out one form per camper. It takes about two minutes.</p>
+    </div>
+
+    <div class="facts">
+      <div class="fact"><b>Aug 7 &amp; 8</b><span>FRIDAY &amp; SATURDAY</span></div>
+      <div class="fact"><b>Bethel's Family Church</b><span>12660 SANDPIPER DR, HOUSTON</span></div>
+      <div class="fact"><b>Free</b><span>HAIRCUTS &middot; SUPPLIES &middot; LUNCH</span></div>
+      <div class="fact"><b>Ages 7&ndash;17</b><span>OPEN TO ALL</span></div>
+    </div>
+
+    <form name="camp-registration" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/thanks.html">
+      <input type="hidden" name="form-name" value="camp-registration">
+      <p class="hp"><label>Leave this field empty: <input name="bot-field"></label></p>
+      <div class="grid">
+        <div class="field full">
+          <label for="camper-name">Camper's full name <span class="req">*</span></label>
+          <input id="camper-name" name="camper-name" type="text" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="camper-dob">Camper's date of birth <span class="req">*</span></label>
+          <input id="camper-dob" name="camper-dob" type="date" required>
+        </div>
+        <div class="field">
+          <label for="camper-age">Camper's age <span class="req">*</span></label>
+          <input id="camper-age" name="camper-age" type="number" min="4" max="18" inputmode="numeric" required>
+        </div>
+        <div class="field full">
+          <label for="allergies">Allergies or medical conditions we should know about <span class="req">*</span> <span class="hint">(write "None" if none)</span></label>
+          <textarea id="allergies" name="allergies" required></textarea>
+        </div>
+        <div class="field">
+          <label for="shirt-size">Shirt size <span class="req">*</span></label>
+          <select id="shirt-size" name="shirt-size" required>
+            <option value="" disabled selected>Select a size</option>
+            <option>Youth Small</option><option>Youth Medium</option><option>Youth Large</option>
+            <option>Adult Small</option><option>Adult Medium</option><option>Adult Large</option><option>Adult XL</option>
+          </select>
+        </div>
+        <div class="field"></div>
+        <div class="field">
+          <label for="parent-first">Parent / guardian first name <span class="req">*</span></label>
+          <input id="parent-first" name="parent-first-name" type="text" autocomplete="given-name" required>
+        </div>
+        <div class="field">
+          <label for="parent-last">Parent / guardian last name <span class="req">*</span></label>
+          <input id="parent-last" name="parent-last-name" type="text" autocomplete="family-name" required>
+        </div>
+        <div class="field">
+          <label for="parent-phone">Parent / guardian phone <span class="req">*</span></label>
+          <input id="parent-phone" name="parent-phone" type="tel" autocomplete="tel" required>
+        </div>
+        <div class="field">
+          <label for="parent-email">Parent / guardian email <span class="hint">(optional)</span></label>
+          <input id="parent-email" name="parent-email" type="email" autocomplete="email">
+        </div>
+        <div class="actions">
+          <button class="btn btn-red" type="submit">Complete registration</button>
+          <span class="note">We'll only use this to run a safe, well-organized camp.</span>
+        </div>
+      </div>
+    </form>
+  </div>
+</main>
+
+<footer><div class="wrap foot-in">
+  <span class="brand" style="font-family:var(--fdisp);font-weight:800">It's Only Right <small style="font-weight:700;font-size:10px;letter-spacing:.22em;text-transform:uppercase">Foundation</small></span>
+  <span>Bethel's Family Church &middot; 12660 Sandpiper Dr, Houston, TX 77035</span>
+</div></footer>
+</body>
+</html>
