@@ -1,0 +1,11 @@
+# Netlify configuration for the It's Only Right Foundation site.
+# Static files are served from the repo root; serverless functions live in netlify/functions.
+
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Pretty URLs (/register instead of /register.html) are on by default.

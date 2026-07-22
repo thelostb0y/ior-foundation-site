@@ -71,6 +71,17 @@
   :focus-visible{outline:2px solid var(--red);outline-offset:3px;border-radius:6px}
 
   .logo{height:34px;width:auto;display:block;flex:0 0 auto}
+  .pay-opts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:520px){.pay-opts{grid-template-columns:1fr}}
+  .pay{position:relative;display:block;cursor:pointer}
+  .pay input{position:absolute;opacity:0;inset:0;cursor:pointer;margin:0}
+  .pay-in{display:block;border:1.5px solid var(--line);background:var(--paper);border-radius:12px;padding:14px 16px;transition:border-color .2s,box-shadow .2s}
+  .pay-in b{display:block;font-family:var(--fdisp);font-weight:800;letter-spacing:-.01em;font-size:16px}
+  .pay-in span{font-size:12.5px;color:var(--ink-45)}
+  .pay input:checked + .pay-in{border-color:var(--red);box-shadow:0 0 0 3px rgba(200,16,46,.12)}
+  .pay input:focus-visible + .pay-in{outline:2px solid var(--red);outline-offset:2px}
+  .reg-error{grid-column:1/-1;margin-top:2px;color:var(--red-deep);font-size:14px;font-weight:600}
+  #reg-submit[disabled]{opacity:.7;cursor:default;transform:none}
   @media(max-width:600px){
     .strip-in>*,.prog>*,.gal>*,.mission-grid>*,.story-grid>*,.hero-top>*,.foot-top>*,.facts>*,.camp-days>*{min-width:0}
     .stat b{font-size:1.7rem}
@@ -102,19 +113,18 @@
     <div class="reg-head">
       <span class="ey">It's Only Right Weekend &middot; Aug 7&ndash;8, 2026</span>
       <h1>Register your camper.</h1>
-      <p>Free, for all young people ages 7 to 17. Fill out one form per camper. It takes about two minutes.</p>
+      <p>Open to all young people ages 7 to 17. A <b>$10 deposit</b> holds your camper's spot (the full camp fee is $40). One form per camper.</p>
     </div>
 
     <div class="facts">
       <div class="fact"><b>Aug 7 &amp; 8</b><span>FRIDAY &amp; SATURDAY</span></div>
       <div class="fact"><b>Bethel's Family Church</b><span>12660 SANDPIPER DR, HOUSTON</span></div>
-      <div class="fact"><b>Free</b><span>HAIRCUTS &middot; SUPPLIES &middot; LUNCH</span></div>
+      <div class="fact"><b>Included</b><span>HAIRCUTS &middot; SUPPLIES &middot; LUNCH</span></div>
       <div class="fact"><b>Ages 7&ndash;17</b><span>OPEN TO ALL</span></div>
     </div>
 
-    <form name="camp-registration" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/thanks.html">
-      <input type="hidden" name="form-name" value="camp-registration">
-      <p class="hp"><label>Leave this field empty: <input name="bot-field"></label></p>
+    <form id="reg-form" novalidate>
+      <p class="hp" aria-hidden="true"><label>Leave this field empty: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
       <div class="grid">
         <div class="field full">
           <label for="camper-name">Camper's full name <span class="req">*</span></label>
@@ -154,13 +164,27 @@
           <input id="parent-phone" name="parent-phone" type="tel" autocomplete="tel" required>
         </div>
         <div class="field">
-          <label for="parent-email">Parent / guardian email <span class="hint">(optional)</span></label>
+          <label for="parent-email">Parent / guardian email <span class="hint">(for your receipt)</span></label>
           <input id="parent-email" name="parent-email" type="email" autocomplete="email">
         </div>
-        <div class="actions">
-          <button class="btn btn-red" type="submit">Complete registration</button>
-          <span class="note">We'll only use this to run a safe, well-organized camp.</span>
+        <div class="field full">
+          <label>Choose your payment <span class="req">*</span></label>
+          <div class="pay-opts">
+            <label class="pay">
+              <input type="radio" name="payment-type" value="deposit" checked>
+              <span class="pay-in"><b>$10 deposit</b><span>Holds the spot &middot; $30 due at camp</span></span>
+            </label>
+            <label class="pay">
+              <input type="radio" name="payment-type" value="full">
+              <span class="pay-in"><b>Pay in full &middot; $40</b><span>All set &middot; nothing due at camp</span></span>
+            </label>
+          </div>
         </div>
+        <div class="actions">
+          <button class="btn btn-red" id="reg-submit" type="submit">Continue to secure payment <span aria-hidden="true">&rarr;</span></button>
+          <span class="note">You'll pay securely via Stripe. The spot is held once payment is complete.</span>
+        </div>
+        <p id="reg-error" class="reg-error" role="alert" hidden></p>
       </div>
     </form>
   </div>
@@ -170,5 +194,33 @@
   <span class="brand" style="font-family:var(--fdisp);font-weight:800">It's Only Right <small style="font-weight:700;font-size:10px;letter-spacing:.22em;text-transform:uppercase">Foundation</small></span>
   <span>Bethel's Family Church &middot; 12660 Sandpiper Dr, Houston, TX 77035</span>
 </div></footer>
+<script>
+(function(){
+  var form=document.getElementById('reg-form');
+  var btn=document.getElementById('reg-submit');
+  var err=document.getElementById('reg-error');
+  if(!form) return;
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    err.hidden=true;
+    if(!form.reportValidity()) return;
+    var data={};
+    new FormData(form).forEach(function(v,k){data[k]=v;});
+    var original=btn.innerHTML;
+    btn.disabled=true; btn.textContent='Redirecting to secure payment…';
+    fetch('/.netlify/functions/create-checkout',{
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)
+    }).then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j};});})
+    .then(function(res){
+      if(res.ok && res.j && res.j.url){window.location.href=res.j.url;return;}
+      throw new Error((res.j&&res.j.error)||'Something went wrong. Please try again.');
+    }).catch(function(ex){
+      btn.disabled=false; btn.innerHTML=original;
+      err.textContent=ex.message; err.hidden=false;
+      err.scrollIntoView({behavior:'smooth',block:'center'});
+    });
+  });
+})();
+</script>
 </body>
 </html>
