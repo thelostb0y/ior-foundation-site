@@ -8,4 +8,9 @@
 [functions]
   node_bundler = "esbuild"
 
+# Prompts for the Stripe key during the one-click "Deploy to Netlify" flow.
+# Safe to leave blank now and add later under Site configuration > Environment variables.
+[template.environment]
+  STRIPE_SECRET_KEY = "Your Stripe Secret key (starts with sk_test_ for testing, sk_live_ when live). Leave blank for now if you don't have it yet."
+
 # Pretty URLs (/register instead of /register.html) are on by default.
